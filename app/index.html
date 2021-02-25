@@ -3,8 +3,10 @@
     <head>
         <meta charset="utf-8" />
         <title>JustStreamIt</title>
-        <link rel="stylesheet" href="style.css" />
+        <link rel="stylesheet" href="css/style.css" />
+        <script src="js/script.js" defer></script>
     </head>
+
     <body>
         <header>
             <img src="img/logo.png" alt="logo JustStreamIt" />
@@ -17,26 +19,47 @@
         </header>
 
         <section>
-            <div id="best_movie"></div>
+            <div id="best_movie">
+                <h1></h1>
+                <button>Play</button>
+                <p></p>
+                <img src="">
+            </div>
 
-            <div id="best_rated_movies">
+            <div id="top_rated_movies">
                 <h1>Films les mieux notés</h1>
                 <div class="movies"></div>
             </div>
 
-            <div id="first_category">
-                <h1>Catégorie 1</h1>
+            <div id="romance">
+                <h1>ROMANCE</h1>
                 <div class="movies"></div>
             </div>
 
-            <div id="second_category">
-                <h1>Catégorie 2</h1>
+            <div id="crime">
+                <h1>CRIME</h1>
                 <div class="movies"></div>
             </div>
 
-            <div id="third_category">
-                <h1>Catégorie 3</h1>
+            <div id="fantasy">
+                <h1>FANTASY</h1>
                 <div class="movies"></div>
+            </div>
+
+            <div id="movie_modal">
+                <div id="modal_content">
+                    <button type="button">&times;</button>
+                    <img src="">
+                    <h1></h1>
+                    <p></p>
+                    <p></p>
+                    <p></p>
+                    <p></p>
+                    <p></p>
+                    <p></p>
+                    <p></p>
+                    <p></p>
+                </div>
             </div>
         </section>
 
