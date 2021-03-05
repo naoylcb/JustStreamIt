@@ -1,153 +1,166 @@
-/* BEST MOVIE */
-let bestMovieUrl;
-const bestMovieTitle = document.querySelector("#best_movie h1");
-const bestMovieDescription = document.querySelector("#best_movie p");
-const bestMovieImage = document.querySelector("#best_movie img");
+/*
+** Get best movie's information and update the DOM
+*/
+const getBestMovie = async () => {
+    const bestMovieTitle = document.querySelector("#best_movie h1");
+    const bestMovieDescription = document.querySelector("#best_movie p");
+    const bestMovieImage = document.querySelector("#best_movie img");
 
-// API request to get movie information
-fetch("http://localhost:8000/api/v1/titles/?sort_by=-imdb_score")
-    .then(response => {
-        if (response.ok) {
-            response.json().then(data => {
-                bestMovieUrl = data.results[0].url;
-                fetch(bestMovieUrl)
-                    .then(response => {
-                        if (response.ok) {
-                            response.json().then(bestMovieData => {
-                                // Adding movie information to the DOM
-                                bestMovieTitle.textContent = bestMovieData.original_title;
-                                bestMovieDescription.textContent = bestMovieData.description;
-                                bestMovieImage.src = bestMovieData.image_url;
-                            });
-                        }
-                    });
-            });
+    // API request to get movie information
+    const response = await fetch("http://localhost:8000/api/v1/titles/?sort_by=-imdb_score");
+    if (response.ok) {
+        const data = await response.json();
+        const bestMovieUrl = data.results[0].url;
+        const bestMovieResponse = await fetch(bestMovieUrl);
+
+        if (bestMovieResponse.ok) {
+            // Adding best movie information to the DOM
+            const bestMovieData = await bestMovieResponse.json();
+            bestMovieTitle.textContent = bestMovieData.original_title;
+            bestMovieDescription.textContent = bestMovieData.description;
+            bestMovieImage.src = bestMovieData.image_url;
+            return bestMovieUrl;
         }
-    });
+    }
+}
 
-/* TOP RATED MOVIES BY CATEGORY */
-const categories = new Map([
-    ["#top_rated_movies div", "http://localhost:8000/api/v1/titles/?sort_by=-imdb_score"],
-    ["#romance div", "http://localhost:8000/api/v1/titles/?genre=romance&sort_by=-imdb_score"],
-    ["#crime div", "http://localhost:8000/api/v1/titles/?genre=crime&sort_by=-imdb_score"],
-    ["#fantasy div", "http://localhost:8000/api/v1/titles/?genre=fantasy&sort_by=-imdb_score"]
-]);
-let moviesDisplayed = new Map();
-
-
-for (let category of categories) {
-    const categoryDiv = document.querySelector(category[0]);
-    let moviesImages = [];
-
-    // API request to get the urls of the movies images
-    fetch(category[1])
-        .then(response => {
-            if (response.ok) {
-                response.json().then(data => {
-                    // Adding movies images urls of the first page to moviesImages
-                    for (let movie of data.results) {
-                        moviesImages.push(movie.image_url);
-                        moviesDisplayed.set(movie.image_url, movie.url);
-                    }
-
-                    fetch(data.next)
-                        .then(response => {
-                            if (response.ok) {
-                                response.json().then(data => {
-                                    // Adding movies images urls of the second page to moviesImages
-                                    for (let movie of data.results) {
-                                        moviesImages.push(movie.image_url);
-                                    }
-
-                                    // Adding movies images to the DOM
-                                    for (let i in moviesImages) {
-                                        if (category[0] === "#top_rated_movies div") {
-                                            if (i > 0 && i < 8) {
-                                                const movieImage = document.createElement("img");
-                                                movieImage.src = moviesImages[i];
-                                                categoryDiv.appendChild(movieImage);
-                                            }
-                                        } else {
-                                            if (i < 7) {
-                                                const movieImage = document.createElement("img");
-                                                movieImage.src = moviesImages[i];
-                                                categoryDiv.appendChild(movieImage);
-                                            }
-                                        }
-                                    }
-                                });
-                            }
-                        });
-                });
+/*
+** Get top rated movies images by category and update the DOM
+*/
+const getTopRatedMovies = async () => {
+    let moviesDisplayed = new Map();
+    const categories = new Map([
+        ["#top_rated_movies div", "http://localhost:8000/api/v1/titles/?sort_by=-imdb_score"],
+        ["#romance div", "http://localhost:8000/api/v1/titles/?genre=romance&sort_by=-imdb_score"],
+        ["#crime div", "http://localhost:8000/api/v1/titles/?genre=crime&sort_by=-imdb_score"],
+        ["#fantasy div", "http://localhost:8000/api/v1/titles/?genre=fantasy&sort_by=-imdb_score"]
+    ]);
+    
+    for (let category of categories) {
+        const categoryDiv = document.querySelector(category[0]);
+        let moviesImages = [];
+    
+        // API request to get the urls of the movies images
+        let response = await fetch(category[1]);
+        if (response.ok) {
+            let data = await response.json();
+            // Adding movies images urls of the first page
+            for (let movie of data.results) {
+                moviesImages.push(movie.image_url);
+                moviesDisplayed.set(movie.image_url, movie.url);
             }
-        });
+            
+            response = await fetch(data.next);
+            if (response.ok) {
+                data = await response.json();
+                // Adding movies images urls of the second page
+                for (let movie of data.results) {
+                    moviesImages.push(movie.image_url);
+                    moviesDisplayed.set(movie.image_url, movie.url);
+                }
+
+                // Adding movies images to the DOM
+                for (let i in moviesImages) {
+                    if (category[0] === "#top_rated_movies div") {
+                        if (i > 0 && i < 8) {
+                            const movieImage = document.createElement("img");
+                            movieImage.src = moviesImages[i];
+                            categoryDiv.appendChild(movieImage);
+                        }
+                    } else {
+                        if (i < 7) {
+                            const movieImage = document.createElement("img");
+                            movieImage.src = moviesImages[i];
+                            categoryDiv.appendChild(movieImage);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return moviesDisplayed;
 }
 
 /* MODAL */
-const modal = document.getElementById("movie_modal");
-const modalContent = document.getElementById("modal_content");
-const bestMovieButton = document.querySelector("#best_movie button");
-const modalCloseButton = document.querySelector("#modal_content button");
+const modal = (bestMovieUrl, moviesDisplayed) => {
+    const modal = document.getElementById("movie_modal");
+    const modalCloseButton = document.querySelector("#modal_content button");
+    const moviesImages = document.querySelectorAll(".movies img");
+    const bestMovieButton = document.querySelector("#best_movie button");
 
-bestMovieButton.addEventListener("click", function() {
-    fetch(bestMovieUrl)
-        .then(response => {
-            if (response.ok) {
-                response.json().then(bestMovieData => {
-                    // Image
-                    modalContent.children[1].src = bestMovieData.image_url;
-
-                    // Title
-                    modalContent.children[2].textContent = bestMovieData.original_title;
-                    
-                    // Genre, Date, Imdb score, Duration
-                    let movieInformation = "";
-
-                    for (let genre of bestMovieData.genres) {
-                        movieInformation += genre + " / ";
-                    }
-
-                    movieInformation += bestMovieData.date_published + " / ";
-                    movieInformation += "Score IMDB : " + bestMovieData.imdb_score + " / ";
-                    movieInformation += "Durée : " + bestMovieData.duration + " min";
-                    modalContent.children[3].textContent = movieInformation;
-                    
-                    // Synopsis
-                    modalContent.children[4].textContent = "Résumé : " + bestMovieData.long_description;
-
-                    // Rated
-                    modalContent.children[5].textContent = "Rated : " + bestMovieData.rated;
-                    
-                    // Director(s)
-                    let directors = "Réalisateur(s) : ";
-                    for (let director of bestMovieData.directors) {
-                        directors += director + " / ";
-                    }
-                    modalContent.children[6].textContent = directors;
-
-                    // Actor(s)
-                    let actors = "Acteur(s) : ";
-                    for (let actor of bestMovieData.actors) {
-                        actors += actor + " / ";
-                    }
-                    modalContent.children[7].textContent = actors;
-                    
-                    // Country(s)
-                    let countries = "Pays d'origine : ";
-                    for (let country of bestMovieData.countries) {
-                        countries += country + " / ";
-                    }
-                    modalContent.children[8].textContent = countries;
-
-                    // Box Office   
-                    modalContent.children[9].textContent = "Box Office : " + bestMovieData.worldwide_gross_income;
-
-                    modal.style.display = "block";
-                });
-            }
+    for (let movieImage of moviesImages) {
+        movieImage.addEventListener("click", function() {
+            movieUrl = moviesDisplayed.get(movieImage.src)
+            updateModal(movieUrl);
+            modal.style.display = "block";
         });
-});
+    }
 
-modalCloseButton.addEventListener("click", function() {
-    modal.style.display = "none";
-});
+    bestMovieButton.addEventListener("click", function() {
+        updateModal(bestMovieUrl);
+        modal.style.display = "block";
+    });
+
+    modalCloseButton.addEventListener("click", function() {
+        modal.style.display = "none";
+    });
+}
+
+/* 
+** Update the modal's content with movie's information
+*/
+const updateModal = async (movieUrl) => {
+    const modalContent = document.getElementById("modal_content");
+
+    const response = await fetch(movieUrl);
+    if (response.ok) {
+        const movieData = await response.json();
+        // Image
+        modalContent.children[1].src = movieData.image_url;
+
+        // Title
+        modalContent.children[2].textContent = movieData.original_title;
+
+        // Genre, Date, Imdb score, Duration
+        let information = "";
+        for (let genre of movieData.genres) information += genre + " / ";
+        information += movieData.date_published + " / ";
+        information += "Score IMDB : " + movieData.imdb_score + " / ";
+        information += "Durée : " + movieData.duration + " min";
+        modalContent.children[3].textContent = information;
+        
+        // Synopsis
+        modalContent.children[4].textContent = "Résumé : " + movieData.long_description;        
+        
+        // Director(s)
+        let directors = "Réalisateur(s) : ";
+        for (let director of movieData.directors) directors += director + " / ";
+        modalContent.children[5].textContent = directors.slice(0, directors.length - 3); // Remove the last " / "
+
+        // Actor(s)
+        let actors = "Acteur(s) : ";
+        for (let actor of movieData.actors) actors += actor + " / ";
+        modalContent.children[6].textContent = actors.slice(0, actors.length - 3);
+        
+        // Country(s)
+        let countries = "Pays d'origine : ";
+        for (let country of movieData.countries) countries += country + " / ";
+        modalContent.children[7].textContent = countries.slice(0, countries.length - 3);
+
+        // Rated
+        modalContent.children[8].textContent = "Rated : " + movieData.rated;
+
+        // Box Office
+        if (movieData.worldwide_gross_income == null) modalContent.children[9].textContent = "Box Office : Inconnu";
+        else modalContent.children[9].textContent = "Box Office : " + movieData.worldwide_gross_income;
+    }
+}
+
+const main = async () => {
+    let bestMovieUrl = await getBestMovie();
+    let moviesDisplayed = await getTopRatedMovies();
+    modal(bestMovieUrl, moviesDisplayed);
+}
+
+main();
