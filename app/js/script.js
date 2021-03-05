@@ -30,10 +30,10 @@ const getBestMovie = async () => {
 const getTopRatedMovies = async () => {
     let moviesDisplayed = new Map();
     const categories = new Map([
-        ["#top_rated_movies div", "http://localhost:8000/api/v1/titles/?sort_by=-imdb_score"],
-        ["#romance div", "http://localhost:8000/api/v1/titles/?genre=romance&sort_by=-imdb_score"],
-        ["#crime div", "http://localhost:8000/api/v1/titles/?genre=crime&sort_by=-imdb_score"],
-        ["#fantasy div", "http://localhost:8000/api/v1/titles/?genre=fantasy&sort_by=-imdb_score"]
+        ["#top_rated_movies .movies", "http://localhost:8000/api/v1/titles/?sort_by=-imdb_score"],
+        ["#romance .movies", "http://localhost:8000/api/v1/titles/?genre=romance&sort_by=-imdb_score"],
+        ["#crime .movies", "http://localhost:8000/api/v1/titles/?genre=crime&sort_by=-imdb_score"],
+        ["#fantasy .movies", "http://localhost:8000/api/v1/titles/?genre=fantasy&sort_by=-imdb_score"]
     ]);
     
     for (let category of categories) {
@@ -61,7 +61,7 @@ const getTopRatedMovies = async () => {
 
                 // Adding movies images to the DOM
                 for (let i in moviesImages) {
-                    if (category[0] === "#top_rated_movies div") {
+                    if (category[0] === "#top_rated_movies .movies") {
                         if (i > 0 && i < 8) {
                             const movieImage = document.createElement("img");
                             movieImage.src = moviesImages[i];
@@ -157,10 +157,38 @@ const updateModal = async (movieUrl) => {
     }
 }
 
+const carousel = () => {
+    const carouselButtons = document.querySelectorAll(".category button");
+
+    let carousel;
+    let imageIndex = 1;
+    let translateX = 0;
+    carouselButtons.forEach(button => {
+        button.addEventListener("click", event => {
+            if (event.target.id === "previous") {
+                if (imageIndex !== 1) {
+                    imageIndex--;
+                    translateX += 888;
+                }
+                carousel = button.nextElementSibling;
+            } else {
+                if (imageIndex !== 2) {
+                    imageIndex++;
+                    translateX -= 888;
+                }
+                carousel = button.previousElementSibling;
+            }
+
+            carousel.style.transform = `translateX(${translateX}px)`;
+        });
+    });
+}
+
 const main = async () => {
     let bestMovieUrl = await getBestMovie();
     let moviesDisplayed = await getTopRatedMovies();
     modal(bestMovieUrl, moviesDisplayed);
+    carousel();
 }
 
 main();

@@ -1,7 +1,9 @@
 body
 {
     margin: 0;
-    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     background-color: #000D23;
     color: white;
     font-family: Arial, Helvetica, sans-serif;
@@ -11,11 +13,11 @@ body
 
 header
 {
-    background-color:#1F95DE;
-    padding: 10px;
     display: flex;
     justify-content: center;
     align-items: center;
+    background-color:#1F95DE;
+    width: 100%;
 }
 
 header img
@@ -26,42 +28,50 @@ header img
 
 nav ul
 {
-    list-style-type: none;
     display: flex;
+    list-style-type: none;
 }
 
 nav a
 {
+    margin-left: 20px;
+    padding: 10px 35px;
     text-decoration: none;
     color: white;
     font-size: 1.2em;
-    padding: 10px 35px;
-    margin-left: 20px;
     border: 1px solid white;
     border-radius: 30px;
 }
 
-nav a:hover, nav a:focus
+nav a:hover
 {
     background-color:lightseagreen;
 }
 
 /* SECTION */
 
+section
+{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Best Movie */
 #best_movie
 {
-    width: 60%;
-    margin: auto;
     margin-top: 10px;
+    text-align: center;
     background-color: #00163B;
+    width: 100%;
     border: 1px solid white;
     border-radius: 30px;
 }
 
 #best_movie button
 {
-    font-size: 1.2em;
     padding: 10px 35px;
+    font-size: 1.2em;
     border-radius: 30px;
     border: 1px solid white;
     box-shadow: 0px 0px 5px black;
@@ -73,9 +83,60 @@ nav a:hover, nav a:focus
     cursor: pointer;
 }
 
-.movies img:hover, .movies img:focus
+/* Categories */
+.category
 {
-    width: 10%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 888px;
+    overflow: hidden;
+}
+
+.category button
+{
+    position: absolute;
+    background-color: teal;
+    border: 0;
+    border-radius: 50%;
+    color: white;
+    font-size: 60px;
+    font-weight: bold;
+    opacity: 0.25;
+    transition: opacity 0.25s;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.category button:hover
+{
+    opacity: 0.8;
+}
+
+.category button:nth-of-type(1)
+{
+    left: 20px;
+}
+
+.category button:nth-of-type(2)
+{
+    right: 20px;
+}
+
+.movies
+{
+    display: flex;
+    transform: translateX(0);
+    transition: transform 0.25s;
+}
+
+.movies img
+{
+    margin: 0px 20px;
+}
+
+.movies img:hover
+{
     box-shadow: 0px 0px 5px white;
     cursor: pointer;
 }
@@ -84,48 +145,50 @@ nav a:hover, nav a:focus
 
 footer
 {
-    background-color: #1F95DE;
-    padding: 5px;
     margin-top: 10px;
+    text-align: center;
+    background-color: #1F95DE;
     color: white;
+    width: 100%;
 }
 
 /* MODAL */
 
 #movie_modal
 {
-    background-color: rgba(0,0,0,0.5);
-    display: none;
     position: fixed;
     left: 0;
     top: 0;
+    display: none;
+    background-color: rgba(0,0,0,0.5);
     width: 100%;
     height: 100%;
     overflow: auto;
+    z-index: 2;
 }
 
 #modal_content
 {
-    background-color: rgba(0,0,0,0.9);
-    color: white;
-    width: 50%;
     margin: auto;
     margin-top: 70px;
     padding: 20px;
+    text-align: center;
+    background-color: rgba(0,0,0,0.9);
+    color: white;
+    width: 50%;
     border: 1px solid white;
     border-radius: 30px;
 }
 
 #modal_content button
 {
-    color: grey;
     float: right;
+    color: grey;
     font-size: 28px;
     font-weight: bold;
 }
   
-#modal_content button:hover, 
-#modal_content button:focus 
+#modal_content button:hover
 {
     color: black;
     cursor: pointer;
