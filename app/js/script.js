@@ -91,7 +91,7 @@ const modal = (bestMovieUrl, moviesDisplayed) => {
 
     for (let movieImage of moviesImages) {
         movieImage.addEventListener("click", function() {
-            movieUrl = moviesDisplayed.get(movieImage.src)
+            movieUrl = moviesDisplayed.get(movieImage.src);
             updateModal(movieUrl);
             modal.style.display = "block";
         });
@@ -125,56 +125,91 @@ const updateModal = async (movieUrl) => {
         // Genre, Date, Imdb score, Duration
         let information = "";
         for (let genre of movieData.genres) information += genre + " / ";
-        information += movieData.date_published + " / ";
+        information += formatDate(movieData.date_published) + " / ";
         information += "Score IMDB : " + movieData.imdb_score + " / ";
-        information += "Durée : " + movieData.duration + " min";
+        information += "Durée : " + formatDuration(movieData.duration);
         modalContent.children[3].textContent = information;
         
         // Synopsis
-        modalContent.children[4].textContent = "Résumé : " + movieData.long_description;        
+        modalContent.children[5].textContent = movieData.long_description;        
         
         // Director(s)
-        let directors = "Réalisateur(s) : ";
+        let directors = "";
         for (let director of movieData.directors) directors += director + " / ";
-        modalContent.children[5].textContent = directors.slice(0, directors.length - 3); // Remove the last " / "
+        modalContent.children[7].textContent = directors.slice(0, directors.length - 3); // Remove the last " / "
 
         // Actor(s)
-        let actors = "Acteur(s) : ";
+        let actors = "";
         for (let actor of movieData.actors) actors += actor + " / ";
-        modalContent.children[6].textContent = actors.slice(0, actors.length - 3);
+        modalContent.children[9].textContent = actors.slice(0, actors.length - 3);
         
         // Country(s)
         let countries = "Pays d'origine : ";
         for (let country of movieData.countries) countries += country + " / ";
-        modalContent.children[7].textContent = countries.slice(0, countries.length - 3);
+        modalContent.children[10].textContent = countries.slice(0, countries.length - 3);
 
         // Rated
-        modalContent.children[8].textContent = "Rated : " + movieData.rated;
+        modalContent.children[11].textContent = "Rated : " + movieData.rated;
 
         // Box Office
-        if (movieData.worldwide_gross_income == null) modalContent.children[9].textContent = "Box Office : Inconnu";
-        else modalContent.children[9].textContent = "Box Office : " + movieData.worldwide_gross_income;
+        if (movieData.worldwide_gross_income == null) modalContent.children[12].textContent = "Box Office : Inconnu";
+        else modalContent.children[12].textContent = "Box Office : " + formatBoxOffice(movieData.worldwide_gross_income) + " $";
     }
+}
+
+const formatDuration = (duration) => {
+    let hour = Math.floor(duration / 60);
+    let minute = duration % 60;
+
+    let numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+    numbers.forEach(number => {
+        if (minute === number) minute = "0" + minute;
+    });
+
+    if (minute === 0) {
+        return hour + "h";
+    } else {
+        return hour + "h" + minute;
+    }
+}
+
+const formatDate = (date) => {
+    let dateElements = date.split("-");
+    return `${dateElements[2]}-${dateElements[1]}-${dateElements[0]}`;
+}
+
+const formatBoxOffice = (boxOffice) => {
+    boxOffice = boxOffice.toString();
+    boxOffice = boxOffice.split("");
+
+    let newBoxOffice = "";
+    for (let i in boxOffice) {
+        if (i % 3 == 0) newBoxOffice += " ";
+        newBoxOffice += boxOffice[i];
+    }
+
+    return newBoxOffice;
 }
 
 const carousel = () => {
     const carouselButtons = document.querySelectorAll(".category button");
+    const translateValue = document.getElementById("top_rated_movies").offsetWidth;
 
     let carousel;
     let imageIndex = 1;
     let translateX = 0;
     carouselButtons.forEach(button => {
         button.addEventListener("click", event => {
-            if (event.target.id === "previous") {
+            if (button.className === "previous") {
                 if (imageIndex !== 1) {
                     imageIndex--;
-                    translateX += 888;
+                    translateX += translateValue;
                 }
                 carousel = button.nextElementSibling;
             } else {
                 if (imageIndex !== 2) {
                     imageIndex++;
-                    translateX -= 888;
+                    translateX -= translateValue;
                 }
                 carousel = button.previousElementSibling;
             }
