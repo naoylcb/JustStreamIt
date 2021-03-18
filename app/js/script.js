@@ -2,7 +2,7 @@
 ** Get best movie's information and update the DOM
 */
 const getBestMovie = async () => {
-    const bestMovieTitle = document.querySelector("#best_movie h1");
+    const bestMovieTitle = document.querySelector("#best_movie h2");
     const bestMovieDescription = document.querySelector("#best_movie p");
     const bestMovieImage = document.querySelector("#best_movie img");
 
@@ -179,16 +179,15 @@ const formatDate = (date) => {
 }
 
 const formatBoxOffice = (boxOffice) => {
-    boxOffice = boxOffice.toString();
-    boxOffice = boxOffice.split("");
+    boxOffice = boxOffice.toString().split("").reverse();
 
-    let newBoxOffice = "";
+    let newBoxOffice = [];
     for (let i in boxOffice) {
-        if (i % 3 == 0) newBoxOffice += " ";
-        newBoxOffice += boxOffice[i];
+        if (i % 3 == 0 && i != 0) newBoxOffice.push(" ");
+        newBoxOffice.push(boxOffice[i]);
     }
 
-    return newBoxOffice;
+    return newBoxOffice.reverse().join("");
 }
 
 const carousel = () => {
