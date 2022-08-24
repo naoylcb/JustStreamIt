@@ -1,3 +1,6 @@
+(Projet réalisé dans le cadre de ma formation)
+(Le but étant d'utiliser le JavaScript)
+
 # JustStreamIt
 
 Première version du site JustStreamIt.
