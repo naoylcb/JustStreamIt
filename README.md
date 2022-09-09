@@ -7,7 +7,7 @@ Première version du site JustStreamIt.
 
 ## Installation et Exécution
 
-Rendez-vous sur cette [page](https://github.com/OpenClassrooms-Student-Center/OCMovies-API-EN-FR).
+Rendez-vous sur cette [page](https://github.com/naoylcb/OCMovies-API).
 Suivez les instructions pour mettre en place l'API en local.
 
 Téléchargez ce repository en cliquant sur le menu "Code", puis "Download ZIP".
