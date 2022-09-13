@@ -1,14 +1,13 @@
-(Projet réalisé dans le cadre de ma formation)
-(Le but étant d'utiliser le JavaScript)
+(Project done during my training to learn JavaScript)
 
 # JustStreamIt
 
-Première version du site JustStreamIt.
+"JustStreamIt" dummy site.
 
-## Installation et Exécution
+## Installation and execution
 
-Rendez-vous sur cette [page](https://github.com/naoylcb/OCMovies-API).
-Suivez les instructions pour mettre en place l'API en local.
+Go to this [page](https://github.com/naoylcb/OCMovies-API).
+Follow the instructions to set up the API locally.
 
-Téléchargez ce repository en cliquant sur le menu "Code", puis "Download ZIP".
-Extrayez le dossier et cliquez sur le fichier index.html dans le dossier "app".
+Download this repository by clicking on the "Code" menu, then "Download ZIP".
+Extract the folder and click on the index.html file in the "app" folder.
