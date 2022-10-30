@@ -1,5 +1,3 @@
-(Project done during my training to learn JavaScript)
-
 # JustStreamIt
 
 "JustStreamIt" dummy site.
